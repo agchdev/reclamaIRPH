@@ -3,8 +3,14 @@ import bodyParser from 'body-parser';
 import nodemailer from './config/nodemailer.js';
 import dotenv from 'dotenv';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
+// Cargar las variables de entorno
 dotenv.config();
+
+// Obtener la ruta del directorio actual
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 3000;
