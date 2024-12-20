@@ -26,6 +26,7 @@ app.get('/', (req, res) => {
 
 // Ruta para enviar el correo
 app.post('/send-email', async (req, res) => {
+    console.log(req)
   const { name, email, message } = req.body;
 
   const mailOptions = {
@@ -40,6 +41,7 @@ app.post('/send-email', async (req, res) => {
     res.send('Correo enviado correctamente');
   } catch (error) {
     res.status(500).send('Hubo un error al enviar el correo');
+    console.log(name, email, message, process.env.EMAIL_USER)
   }
 });
 

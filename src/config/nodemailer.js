@@ -1,11 +1,12 @@
 import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail', // Cambia según tu proveedor
+  service: 'gmail', // Usamos Gmail como servicio SMTP
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.EMAIL_USER, // Correo electrónico de la cuenta de Gmail
+    pass: process.env.EMAIL_PASS, // Clave de aplicación de Gmail
   },
 });
 
 export default transporter;
+
