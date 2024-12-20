@@ -3,10 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -20,10 +18,8 @@
   },
   "homepage": "https://github.com/agchdev/reclamaIRPH#readme",
   "dependencies": {
-    "body-parser": "^1.20.3",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.16"
   },
   "devDependencies": {
