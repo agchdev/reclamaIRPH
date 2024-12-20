@@ -36,11 +36,13 @@ app.post('/send-email', async (req, res) => {
     text: `Nombre: ${name}\nCorreo: ${email}\nMensaje: ${message}`,
   };
 
+  console.log("Mail Options ->"+mailOptions);
+
   try {
     await nodemailer.sendMail(mailOptions);
     res.send('Correo enviado correctamente');
   } catch (error) {
-    res.status(500).send('Hubo un error al enviar el correo');
+    console.error("Error al enviar el correo:", error);
     console.log(name, email, message, process.env.EMAIL_USER)
   }
 });
