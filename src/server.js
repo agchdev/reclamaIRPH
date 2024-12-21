@@ -5,6 +5,7 @@ import nodemailer from './config/nodemailer.js'; // Configuración para enviar c
 import dotenv from 'dotenv'; // Carga variables de entorno desde un archivo .env
 import path from 'path'; // Módulo para trabajar con rutas de archivos
 import { fileURLToPath } from 'url'; // Módulo para obtener la ruta del archivo actual en ES6
+import { generarPDF } from './config/generarPDF.js'; // Función para generar el PDF
 
 // Cargar las variables de entorno desde un archivo .env
 dotenv.config();
@@ -27,30 +28,36 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// Ruta para manejar el envío del formulario y enviar correos electrónicos
+// Ruta para manejar el envío del formulario y generar el PDF
 app.post('/send-email', async (req, res) => {
   // Extrae los datos del cuerpo de la solicitud
-  console.log(req); // Log para verificar los datos de la solicitud
   const { name, email, message } = req.body;
 
-  // Configuración del correo a enviar
-  const mailOptions = {
-    from: email, // Remitente del correo (el email del usuario)
-    to: process.env.EMAIL_USER, // Correo del destinatario (configurado en las variables de entorno)
-    subject: 'Nuevo mensaje de contacto', // Asunto del correo
-    text: `Nombre: ${name}\nCorreo: ${email}\nMensaje: ${message}`, // Contenido del correo
-  };
-
-  console.log("Mail Options ->" + mailOptions); // Log para verificar las opciones del correo
-
+  // Generar el PDF con la información del formulario
   try {
-    // Intenta enviar el correo usando nodemailer
+    const pdfPath = await generarPDF({ nombre: name, email, mensaje: message, fecha: new Date().toLocaleDateString() });
+
+    // Configuración del correo a enviar
+    const mailOptions = {
+      from: email, // Remitente del correo (el email del usuario)
+      to: process.env.EMAIL_USER, // Correo del destinatario (configurado en las variables de entorno)
+      subject: 'Nuevo mensaje de contacto', // Asunto del correo
+      text: `Nombre: ${name}\nCorreo: ${email}\nMensaje: ${message}`, // Contenido del correo
+      attachments: [
+        {
+          filename: `formulario_${Date.now()}.pdf`,
+          path: pdfPath, // Ruta del PDF generado
+        },
+      ],
+    };
+
+    // Enviar el correo con el archivo adjunto
     await nodemailer.sendMail(mailOptions);
-    res.send('Correo enviado correctamente'); // Respuesta al cliente si el correo se envía con éxito
+    res.send('Correo enviado correctamente con el PDF adjunto'); // Respuesta al cliente si el correo se envía con éxito
   } catch (error) {
-    // Manejo de errores al enviar el correo
-    console.error("Error al enviar el correo:", error); // Log del error
-    console.log(name, email, message, process.env.EMAIL_USER); // Información adicional para depuración
+    // Manejo de errores al generar el PDF o enviar el correo
+    console.error("Error al procesar la solicitud:", error);
+    res.status(500).send('Error al enviar el correo o generar el PDF');
   }
 });
 
