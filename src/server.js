@@ -15,7 +15,6 @@ dotenv.config();
 // Configurar directorio de subida de archivos
 const upload = multer({ dest: 'uploads/' });
 
-
 // Obtener la ruta del archivo actual y su directorio, útil para manejar rutas relativas
 const __filename = fileURLToPath(import.meta.url); // Ruta del archivo actual
 const __dirname = path.dirname(__filename); // Directorio del archivo actual
@@ -41,18 +40,18 @@ app.get('/', (req, res) => {
 
 // Ruta para manejar el envío del formulario y generar el PDF
 app.post('/send-email', upload.fields([
-  { name: 'file1', maxCount: 1 }, // Campo para un solo archivo
-  { name: 'file2', maxCount: 1 }, // Otro campo para un segundo archivo
+  { name: 'file1', maxCount: 1 }, // Primer archivo
+  { name: 'file2', maxCount: 1 }, // Segundo archivo
 ]), async (req, res) => {
-  // Extrae los datos del cuerpo de la solicitud
-  const { name, email, message } = req.body;
-  
-  const file1 = req.files['file1'][0]; // Primer archivo
-  const file2 = req.files['file2'][0]; // Segundo archivo
+  const { name, email, message, cliente, cantidad, factura1, fecha } = req.body;
 
-  // Generar el PDF con la información del formulario
   try {
-    const pdfPath = await generarPDF({ nombre: name, email, mensaje: message, fecha: new Date().toLocaleDateString() });
+    // Generar el PDF modificado con los datos del formulario
+    const pdfPath = await generarPDF({ cliente, cantidad, factura1, fecha });
+
+    // Obtener los archivos subidos
+    const file1 = req.files['file1'][0];
+    const file2 = req.files['file2'][0];
 
     // Configuración del correo a enviar
     const mailOptions = {
@@ -62,7 +61,7 @@ app.post('/send-email', upload.fields([
       text: `Nombre: ${name}\nCorreo: ${email}\nMensaje: ${message}`, // Contenido del correo
       attachments: [
         {
-          filename: `formulario_${Date.now()}.pdf`,
+          filename: 'PDF_Modificado.pdf',
           path: pdfPath, // Ruta del PDF generado
         },
         {
@@ -78,13 +77,9 @@ app.post('/send-email', upload.fields([
 
     // Enviar el correo con el archivo adjunto
     await nodemailer.sendMail(mailOptions);
-    res.send('Correo enviado correctamente con el PDF adjunto'); // Respuesta al cliente si el correo se envía con éxito
-    // fs.unlink(file.path, (err) => {
-    //   if (err) console.error('Error al eliminar el archivo:', err);
-    //   else console.log('Archivo eliminado correctamente');
-    // });
+    res.send('Correo enviado correctamente con los archivos adjuntos.');
 
-    // Eliminar ambos archivos después de enviar el correo
+    // Eliminar los archivos temporales
     const archivosAEliminar = [pdfPath, file1.path, file2.path];
 
     archivosAEliminar.forEach((archivo) => {
@@ -98,8 +93,8 @@ app.post('/send-email', upload.fields([
     });
   } catch (error) {
     // Manejo de errores al generar el PDF o enviar el correo
-    console.error("Error al procesar la solicitud:", error);
-    res.status(500).send('Error al enviar el correo o generar el PDF');
+    console.error('Error al procesar la solicitud:', error);
+    res.status(500).send('Error al enviar el correo o generar el PDF.');
   }
 });
 
