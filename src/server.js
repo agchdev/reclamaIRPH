@@ -6,13 +6,24 @@ import dotenv from 'dotenv'; // Carga variables de entorno desde un archivo .env
 import path from 'path'; // Módulo para trabajar con rutas de archivos
 import { fileURLToPath } from 'url'; // Módulo para obtener la ruta del archivo actual en ES6
 import { generarPDF } from './config/generarPDF.js'; // Función para generar el PDF
+import multer from 'multer';
+import fs from 'fs';
 
 // Cargar las variables de entorno desde un archivo .env
 dotenv.config();
 
+// Configurar directorio de subida de archivos
+const upload = multer({ dest: 'uploads/' });
+
+
 // Obtener la ruta del archivo actual y su directorio, útil para manejar rutas relativas
 const __filename = fileURLToPath(import.meta.url); // Ruta del archivo actual
 const __dirname = path.dirname(__filename); // Directorio del archivo actual
+
+// Crear carpeta 'uploads/' si no existe
+if (!fs.existsSync('uploads')) {
+  fs.mkdirSync('uploads');
+}
 
 // Crear una instancia de Express
 const app = express();
@@ -29,9 +40,10 @@ app.get('/', (req, res) => {
 });
 
 // Ruta para manejar el envío del formulario y generar el PDF
-app.post('/send-email', async (req, res) => {
+app.post('/send-email', upload.single('file'), async (req, res) => {
   // Extrae los datos del cuerpo de la solicitud
   const { name, email, message } = req.body;
+  const file = req.file; // Archivo subido
 
   // Generar el PDF con la información del formulario
   try {
@@ -48,12 +60,20 @@ app.post('/send-email', async (req, res) => {
           filename: `formulario_${Date.now()}.pdf`,
           path: pdfPath, // Ruta del PDF generado
         },
+        {
+          filename: file.originalname,
+          path: file.path,
+        },
       ],
     };
 
     // Enviar el correo con el archivo adjunto
     await nodemailer.sendMail(mailOptions);
     res.send('Correo enviado correctamente con el PDF adjunto'); // Respuesta al cliente si el correo se envía con éxito
+    fs.unlink(file.path, (err) => {
+      if (err) console.error('Error al eliminar el archivo:', err);
+      else console.log('Archivo eliminado correctamente');
+    });
   } catch (error) {
     // Manejo de errores al generar el PDF o enviar el correo
     console.error("Error al procesar la solicitud:", error);

@@ -19,7 +19,7 @@ export async function generarPDF(data) {
   page.drawText(`Fecha: ${data.fecha}`, { x, y, size: fontSize });
 
   const pdfBytes = await pdfDoc.save();
-  const pdfPath = path.join('./public', `formulario_${Date.now()}.pdf`);
+  const pdfPath = path.join('./uploads', `formulario_${Date.now()}.pdf`);
   fs.writeFileSync(pdfPath, pdfBytes);
 
   return pdfPath;
