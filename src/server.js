@@ -40,10 +40,15 @@ app.get('/', (req, res) => {
 });
 
 // Ruta para manejar el envío del formulario y generar el PDF
-app.post('/send-email', upload.single('file'), async (req, res) => {
+app.post('/send-email', upload.fields([
+  { name: 'file1', maxCount: 1 }, // Campo para un solo archivo
+  { name: 'file2', maxCount: 1 }, // Otro campo para un segundo archivo
+]), async (req, res) => {
   // Extrae los datos del cuerpo de la solicitud
   const { name, email, message } = req.body;
-  const file = req.file; // Archivo subido
+  
+  const file1 = req.files['file1'][0]; // Primer archivo
+  const file2 = req.files['file2'][0]; // Segundo archivo
 
   // Generar el PDF con la información del formulario
   try {
@@ -61,8 +66,12 @@ app.post('/send-email', upload.single('file'), async (req, res) => {
           path: pdfPath, // Ruta del PDF generado
         },
         {
-          filename: file.originalname,
-          path: file.path,
+          filename: file1.originalname,
+          path: file1.path,
+        },
+        {
+          filename: file2.originalname,
+          path: file2.path,
         },
       ],
     };
@@ -70,9 +79,22 @@ app.post('/send-email', upload.single('file'), async (req, res) => {
     // Enviar el correo con el archivo adjunto
     await nodemailer.sendMail(mailOptions);
     res.send('Correo enviado correctamente con el PDF adjunto'); // Respuesta al cliente si el correo se envía con éxito
-    fs.unlink(file.path, (err) => {
-      if (err) console.error('Error al eliminar el archivo:', err);
-      else console.log('Archivo eliminado correctamente');
+    // fs.unlink(file.path, (err) => {
+    //   if (err) console.error('Error al eliminar el archivo:', err);
+    //   else console.log('Archivo eliminado correctamente');
+    // });
+
+    // Eliminar ambos archivos después de enviar el correo
+    const archivosAEliminar = [pdfPath, file1.path, file2.path];
+
+    archivosAEliminar.forEach((archivo) => {
+      fs.unlink(archivo, (err) => {
+        if (err) {
+          console.error(`Error al eliminar el archivo ${archivo}:`, err);
+        } else {
+          console.log(`Archivo eliminado correctamente: ${archivo}`);
+        }
+      });
     });
   } catch (error) {
     // Manejo de errores al generar el PDF o enviar el correo
