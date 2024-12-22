@@ -1,49 +1,60 @@
+import pkg from '@pdftron/pdfnet-node';
+const { PDFNet } = pkg;
+
 import fs from 'fs';
-import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import path from 'path';
 
 export async function generarPDF(datos) {
-  const pdfPath = './model/PETICION_INICIAL_MONITORIO_MODELO.pdf';
-  const existingPdfBytes = fs.readFileSync(pdfPath);
+  const inputPath = './model/PETICION_INICIAL_MONITORIO_MODELO.pdf';
+  const outputPath = `./uploads/PETICION_MODIFICADA_${Date.now()}.pdf`;
 
-  const pdfDoc = await PDFDocument.load(existingPdfBytes);
+  // Inicializar PDFNet con la clave de licencia desde las variables de entorno
+  await PDFNet.initialize(process.env.PDFTRON_LICENSE);
 
-  const pages = pdfDoc.getPages();
-  const primeraPagina = pages[0];
-  const { width, height } = primeraPagina.getSize();
+  try {
+    // Cargar el documento PDF
+    const doc = await PDFNet.PDFDoc.createFromFilePath(inputPath);
+    doc.initSecurityHandler();
+    doc.lock();
 
-  // Usa una fuente estándar embebida
-  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const replacer = await PDFNet.ContentReplacer.create();
+    const page = await doc.getPage(1); // Editar la primera página
 
-  // Modificar el PDF con los datos proporcionados
-  primeraPagina.drawText(`Nombre del Cliente: ${datos.nombre}`, {
-    x: 50,
-    y: height - 100,
-    size: 12,
-    font,
-    color: rgb(0, 0, 0),
-  });
+    // Añadir reemplazos de texto dinámico
+    await replacer.addString('(cliente)', datos.cliente);
+    await replacer.addString('(dineroEnLetra)', datos.dineroEnLetra);
+    await replacer.addString('(dineroEnNumero)', datos.dineroEnNumero);
+    await replacer.addString('(contraDe)', datos.contraDe);
+    await replacer.addString('(CIFcontra)', datos.CIFcontra);
+    await replacer.addString('(domicilioContra)', datos.domicilioContra);
+    await replacer.addString('(cantidad)', datos.cantidad);
+    await replacer.addString('(numero)', datos.factura1);
+    await replacer.addString('(fecha)', datos.fecha);
+    await replacer.addString('(importe)', datos.importe);
+    await replacer.addString('(pdf1)', datos.pdf1);
+    await replacer.addString('(numeroAlbaran)', datos.numeroAlbaran);
+    await replacer.addString('(fechaAlbaran)', datos.fechaAlbaran);
+    await replacer.addString('(sumaImporte)', datos.sumaImporte);
+    await replacer.addString('(suma)', datos.suma);
+    await replacer.addString('(contrarioDeudor)', datos.contrarioDeudor);
+    await replacer.addString('(ascendente)', datos.ascendente);
+    await replacer.addString('(diaSem)', datos.diaSem);
+    await replacer.addString('(diaMes)', datos.diaMes);
+    await replacer.addString('(mes)', datos.mes);
+    await replacer.addString('(anio)', datos.anio);
 
-  primeraPagina.drawText(`Cantidad Reclamada: ${datos.cantidad}`, {
-    x: 50,
-    y: height - 120,
-    size: 12,
-    font,
-    color: rgb(0, 0, 0),
-  });
+    // Procesar la página con los reemplazos
+    await replacer.process(page);
 
-  primeraPagina.drawText(`Lugar y Fecha: ${datos.fecha}`, {
-    x: 50,
-    y: height - 140,
-    size: 12,
-    font,
-    color: rgb(0, 0, 0),
-  });
+    // Guardar el documento modificado
+    await doc.save(outputPath, PDFNet.SDFDoc.SaveOptions.e_linearized);
+    console.log(`PDF modificado guardado en: ${outputPath}`);
 
-  // Guardar el PDF modificado
-  const pdfBytes = await pdfDoc.save();
-  const outputPath = `./uploads/PETICION_INICIAL_${Date.now()}.pdf`;
-  fs.writeFileSync(outputPath, pdfBytes);
-
-  return outputPath;
+    return outputPath;
+  } catch (error) {
+    console.error('Error al modificar el PDF:', error);
+    throw error;
+  } finally {
+    await PDFNet.shutdown();
+  }
 }
