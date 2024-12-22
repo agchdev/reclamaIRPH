@@ -11,23 +11,42 @@
         }
         h1 {
             text-align: center;
+        }
+        h2{
+            text-align: center;
+        }
+        .line{
             text-decoration: underline;
         }
         .content {
             margin-top: 20px;
             line-height: 1.5;
         }
+        p{
+            line-height: 2rem;
+        }
     </style>
 </head>
 <body>
-    <h1>AL JUZGADO DE PRIMERA INSTANCIA</h1>
+    <h1 class="line">AL JUZGADO DE PRIMERA INSTANCIA</h1>
     <div class="content">
-        <p>DON JUAN ANTONIO MONTENEGRO RUBIO, Procurador de los Tribunales, en nombre de <strong>{{cliente}}</strong>, cuya representación acreditaré mediante comparecencia “apud acta” y asistido del Letrado del Ilustre Colegio de Abogados de Granada, José Manuel Aguayo Pozo, Colegiado 3031, como mejor proceda en derecho, comparezco y DIGO:</p>
-        <p>Que en la representación que ostento y siguiendo instrucciones de mi mandante, por medio del presente escrito formulo PETICIÓN INICIAL DE PROCEDIMIENTO MONITORIO en reclamación de <strong>{{dineroEnLetra}}</strong> (<strong>{{dineroEnNumero}}</strong>€) de principal, en contra de <strong>{{contraDe}}</strong>, con CIF <strong>{{CIFcontra}}</strong> y con domicilio en <strong>{{domicilioContra}}</strong>, en base a los hechos que a continuación se detallan:</p>
-        <h2>H E C H O S</h2>
-        <p>PRIMERO: ORIGEN Y CUANTÍA DE LA DEUDA</p>
+        <p><i>DON JUAN ANTONIO MONTENEGRO RUBIO</i>, Procurador de los Tribunales, en nombre de <strong>{{cliente}}</strong>, cuya representación acreditaré mediante comparecencia “apud acta” y asistido del Letrado del Ilustre Colegio de Abogados de Granada, José Manuel Aguayo Pozo, Colegiado 3031, como mejor proceda en derecho, comparezco y <strong class="line">DIGO:</strong></p>
+        <p>Que en la representación que ostento y siguiendo instrucciones de mi mandante, por medio del presente escrito formulo <strong class="line">PETICIÓN INICIAL DE PROCEDIMIENTO MONITORIO</strong> en reclamación de <strong>{{dineroEnLetra}}</strong> (<strong>{{dineroEnNumero}}</strong>€) de principal, en contra de <strong>{{contraDe}}</strong>, con CIF <strong>{{CIFcontra}}</strong> y con domicilio en <strong>{{domicilioContra}}</strong>, en base a los hechos que a continuación se detallan:</p>
+        <h2 class="line">H E C H O S</h2>
+        <p><strong class="line">PRIMERO: ORIGEN Y CUANTÍA DE LA DEUDA</strong></p>
         <p>En virtud de las relaciones comerciales existentes entre las partes, la demandada resulta en deber la cantidad de <strong>{{cantidad}}</strong>.</p>
-        <p>Factura nº <strong>{{factura1}}</strong>, de fecha <strong>{{fecha}}</strong>, por importe de <strong>{{importe}}</strong>, que se acompañan como <strong>{{pdf1}}</strong>.</p>
+        <p>En prueba de lo expuesto se acompañan las siguientes facturas/albaranes/pagarés/contratos:</p>
+        <div>  
+        <h3>FACTURAS:</h3>
+        <ul>
+            <li>Factura nº <strong>{{factura1}}</strong>, de fecha <strong>{{fecha}}</strong>, por importe de <strong>{{importe}}</strong>, que se acompañan como <strong>{{pdf1}}</strong>.</li>
+            <li>Factura nº <strong>{{numeroFactura}}</strong>, asi sucesivamente.</li>
+        </ul>
+        </div>
+        <h3>ALBARANES:</h3>
+        <ul>
+            <li>ALBARÁN, nº <strong>{{numeroAlbaran}}</strong> de fecha <strong>{{fechaAlbaran}}</strong>, que se une como documento número <strong>{{numeroDocumento}}</strong></li>
+        </ul>
     </div>
 </body>
 </html>
