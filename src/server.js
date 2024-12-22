@@ -43,11 +43,33 @@ app.post('/send-email', upload.fields([
   { name: 'file1', maxCount: 1 }, // Primer archivo
   { name: 'file2', maxCount: 1 }, // Segundo archivo
 ]), async (req, res) => {
-  const { name, email, message, cliente, cantidad, factura1, fecha } = req.body;
+  const { name, dineroEnLetra, dineroEnNumero, contraDe, CIFcontra, domicilioContra, importe, pdf1, numeroAlbaran, fechaAlbaran, sumaImporte, suma, contrarioDeudor, ascendente, diaSem, diaMes, mes, anio, email, message, cliente, cantidad, factura1, fecha } = req.body;
 
   try {
     // Generar el PDF modificado con los datos del formulario
-    const pdfPath = await generarPDF({ cliente, cantidad, factura1, fecha });
+    const pdfPath = await generarPDF({
+      cliente: cliente || 'Sin cliente',
+      dineroEnLetra: dineroEnLetra || 'N/A',
+      dineroEnNumero: dineroEnNumero || '0',
+      contraDe: contraDe || 'N/A',
+      CIFcontra: CIFcontra || 'N/A',
+      domicilioContra: domicilioContra || 'N/A',
+      cantidad: cantidad || '0',
+      factura1: factura1 || 'N/A',
+      fecha: fecha || 'N/A',
+      importe: importe || '0',
+      pdf1: pdf1 || 'N/A',
+      numeroAlbaran: numeroAlbaran || 'N/A',
+      fechaAlbaran: fechaAlbaran || 'N/A',
+      sumaImporte: sumaImporte || '0',
+      suma: suma || '0',
+      contrarioDeudor: contrarioDeudor || 'N/A',
+      ascendente: ascendente || 'N/A',
+      diaSem: diaSem || 'N/A',
+      diaMes: diaMes || 'N/A',
+      mes: mes || 'N/A',
+      anio: anio || 'N/A',
+    });
 
     // Obtener los archivos subidos
     const file1 = req.files['file1'][0];
