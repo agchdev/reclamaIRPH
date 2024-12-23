@@ -1,52 +1,109 @@
 <!-- template.html -->
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Documento PDF</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
+            margin: 100px;
         }
+
         h1 {
             text-align: center;
         }
-        h2{
+
+        h2 {
             text-align: center;
         }
-        .line{
+
+        .line {
             text-decoration: underline;
         }
+
         .content {
             margin-top: 20px;
             line-height: 1.5;
         }
-        p{
+
+        p {
             line-height: 2rem;
+        }
+
+        .facturas {
+            margin-top: 20px;
+        }
+
+        .albaranes {
+            margin-top: 20px;
         }
     </style>
 </head>
+
 <body>
     <h1 class="line">AL JUZGADO DE PRIMERA INSTANCIA</h1>
     <div class="content">
-        <p><i>DON JUAN ANTONIO MONTENEGRO RUBIO</i>, Procurador de los Tribunales, en nombre de <strong>{{cliente}}</strong>, cuya representación acreditaré mediante comparecencia “apud acta” y asistido del Letrado del Ilustre Colegio de Abogados de Granada, José Manuel Aguayo Pozo, Colegiado 3031, como mejor proceda en derecho, comparezco y <strong class="line">DIGO:</strong></p>
-        <p>Que en la representación que ostento y siguiendo instrucciones de mi mandante, por medio del presente escrito formulo <strong class="line">PETICIÓN INICIAL DE PROCEDIMIENTO MONITORIO</strong> en reclamación de <strong>{{dineroEnLetra}}</strong> (<strong>{{dineroEnNumero}}</strong>€) de principal, en contra de <strong>{{contraDe}}</strong>, con CIF <strong>{{CIFcontra}}</strong> y con domicilio en <strong>{{domicilioContra}}</strong>, en base a los hechos que a continuación se detallan:</p>
+        <p><i>DON JUAN ANTONIO MONTENEGRO RUBIO</i>, Procurador de los Tribunales, en nombre de
+            <strong>{{cliente}}</strong>, cuya representación acreditaré mediante comparecencia “apud acta” y asistido
+            del Letrado del Ilustre Colegio de Abogados de Granada, José Manuel Aguayo Pozo, Colegiado 3031, como mejor
+            proceda en derecho, comparezco y <strong class="line">DIGO:</strong></p>
+        <p>Que en la representación que ostento y siguiendo instrucciones de mi mandante, por medio del presente escrito
+            formulo <strong class="line">PETICIÓN INICIAL DE PROCEDIMIENTO MONITORIO</strong> en reclamación de
+            <strong>{{dineroEnLetra}}</strong> (<strong>{{dineroEnNumero}}</strong>€) de principal, en contra de
+            <strong>{{contraDe}}</strong>, con CIF <strong>{{CIFcontra}}</strong> y con domicilio en
+            <strong>{{domicilioContra}}</strong>, en base a los hechos que a continuación se detallan:</p>
         <h2 class="line">H E C H O S</h2>
         <p><strong class="line">PRIMERO: ORIGEN Y CUANTÍA DE LA DEUDA</strong></p>
-        <p>En virtud de las relaciones comerciales existentes entre las partes, la demandada resulta en deber la cantidad de <strong>{{cantidad}}</strong>.</p>
+        <p>En virtud de las relaciones comerciales existentes entre las partes, la demandada resulta en deber la
+            cantidad de <strong>{{cantidad}}</strong>.</p>
         <p>En prueba de lo expuesto se acompañan las siguientes facturas/albaranes/pagarés/contratos:</p>
-        <div>  
-        <h3>FACTURAS:</h3>
-        <ul>
-            <li>Factura nº <strong>{{factura1}}</strong>, de fecha <strong>{{fecha}}</strong>, por importe de <strong>{{importe}}</strong>, que se acompañan como <strong>{{pdf1}}</strong>.</li>
-            <li>Factura nº <strong>{{numeroFactura}}</strong>, asi sucesivamente.</li>
-        </ul>
+        <div class="facturas">
+            <h3>FACTURAS:</h3>
+            <ul>
+                <li>Factura nº <strong>{{factura1}}</strong>, de fecha <strong>{{fecha}}</strong>, por importe de
+                    <strong>{{importe}}</strong>, que se acompañan como <strong>{{pdf1}}</strong>.</li>
+                <li>Factura nº <strong>{{numeroFactura}}</strong>, asi sucesivamente.</li>
+            </ul>
         </div>
-        <h3>ALBARANES:</h3>
-        <ul>
-            <li>ALBARÁN, nº <strong>{{numeroAlbaran}}</strong> de fecha <strong>{{fechaAlbaran}}</strong>, que se une como documento número <strong>{{numeroDocumento}}</strong></li>
-        </ul>
+        <div class="albaranes">
+            <h3>ALBARANES:</h3>
+            <ul>
+                <li>ALBARÁN, nº <strong>{{numeroAlbaran}}</strong> de fecha <strong>{{fechaAlbaran}}</strong>, que se
+                    une como documento número <strong>{{numeroDocumento}}</strong></li>
+            </ul>
+        </div>
+        <div class="otros">
+            <h3>OTROS:</h3>
+            <ul>
+                <li>
+                    Otro tipo de documento que justifique la deuda que el cliente le dé nombre.
+                    El importe total adeudado asciende a <strong>{{sumaImporte}}</strong>€.
+                </li>
+            </ul>
+        </div>
+        <p><strong class="line">SEGUNDO: DE LA RECLAMACIÓN EXTRAJUDICIAL</strong></p>
+        <p>Todas las gestiones amistosas realizadas con la demandada para intentar solventar la controversia han resultado infructuosas por cuanto no ha quedado otra alternativa que la interposición de la presente para reclamar la suma pendiente de pago conforme a las facturas acompañadas.</p>
+        <div class="section">
+            <h2>FUNDAMENTOS DE DERECHO</h2>
+
+            <div class="law">
+                <ul>
+                    <li><strong>I. Competencia:</strong> De conformidad con lo establecido en el artículo 813 de la Ley 1/2000 de Enjuiciamiento Civil es competente el Juzgado de Primera Instancia del domicilio del deudor.</li>
+                    <li><strong>II. Procedimiento:</strong> El procedimiento monitorio aparece regulado en el artículo 814 de la misma Ley 1/2000.</li>
+                    <li><strong>III. Cuantía:</strong> La cuantía de la deuda queda fijada en la suma total reclamada de principal.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="section conclusion">
+            <p><strong>SUPLICO AL JUZGADO:</strong> Que teniendo por presentado este escrito con los documentos y copias que se acompañan, se sirva admitirlos y me tenga por personado en nombre de <strong>{{cliente}}</strong> y por formulada PETICIÓN INICIAL DE PROCESO MONITORIO en contra de <strong>{{contrarioDeudor}}</strong>, a fin de que se requiera al deudor para que en el plazo de veinte días, pague la cantidad que se reclama ascendente a la suma de <strong>{{ascendente}}</strong>.</p>
+        </div>
+
+        <div class="signature">
+            <p>En {{díaSem}} a {{díaMes}} de {{mes}} de {{año}}.</p>
+        </div>
     </div>
 </body>
+
 </html>

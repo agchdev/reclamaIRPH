@@ -48,7 +48,7 @@ app.post('/send-email', upload.fields([
   try {
     // Generar el PDF modificado con los datos del formulario
     const pdfPath = await generarPDF({
-      cliente: cliente || 'Sin cliente',
+      cliente: name || 'Sin cliente',
       dineroEnLetra: dineroEnLetra || 'N/A',
       dineroEnNumero: dineroEnNumero || '0',
       contraDe: contraDe || 'N/A',

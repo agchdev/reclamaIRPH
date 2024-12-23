@@ -25,10 +25,24 @@ export async function generarPDF(datos) {
             .replace('{{factura1}}', datos.factura1 || 'N/A')
             .replace('{{fecha}}', datos.fecha || 'N/A')
             .replace('{{importe}}', datos.importe || '0.00')
-            .replace('{{pdf1}}', datos.pdf1 || 'Documento no especificado');
+            .replace('{{pdf1}}', datos.pdf1 || 'Documento no especificado')
+            .replace('{{numeroAlbaran}}', datos.numeroAlbaran || 'N/A')
+            .replace('{{fechaAlbaran}}', datos.fechaAlbaran || 'N/A')
+            .replace('{{sumaImporte}}', datos.sumaImporte || '0.00')
+            .replace('{{suma}}', datos.suma || '0.00')
+            .replace('{{contrarioDeudor}}', datos.contrarioDeudor || 'Parte contraria')
+            .replace('{{ascendente}}', datos.ascendente || 'N/A')
+            .replace('{{diaSem}}', new Date().getDay() || 'N/A')
+            .replace('{{diaMes}}', new Date().getDate() || 'N/A')
+            .replace('{{mes}}', new Date().getMonth() || 'N/A')
+            .replace('{{anio}}', new Date().getFullYear() || 'N/A')
+            .replace('{{email}}', datos.email || 'N/A')
+            .replace('{{message}}', datos.message || 'N/A');
 
         // Iniciar Puppeteer
-        const browser = await puppeteer.launch(); // Usa el navegador preempaquetado
+        const browser = await puppeteer.launch({
+          headless: 'new',
+        }); // Usa el navegador preempaquetado
         const page = await browser.newPage();
 
         // Cargar el contenido HTML en la página
