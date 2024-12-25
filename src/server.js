@@ -45,12 +45,90 @@ app.post('/send-email', upload.fields([
 ]), async (req, res) => {
   const { name, dineroEnLetra, dineroEnNumero, contraDe, CIFcontra, domicilioContra, importe, pdf1, numeroAlbaran, fechaAlbaran, sumaImporte, suma, contrarioDeudor, ascendente, diaSem, diaMes, mes, anio, email, message, cliente, cantidad, factura1, fecha } = req.body;
 
+  function numeroATexto(numero) {
+    // Reemplazar coma por punto si el usuario usa coma para decimales
+    numero = parseFloat(numero.toString().replace(',', '.'));
+
+    if (isNaN(numero)) return 'VALOR NO VÁLIDO';
+
+    const unidades = [
+      '', 'UNO', 'DOS', 'TRES', 'CUATRO', 'CINCO', 'SEIS', 'SIETE', 'OCHO', 'NUEVE'
+    ];
+    const decenas = [
+      '', 'DIEZ', 'VEINTE', 'TREINTA', 'CUARENTA', 'CINCUENTA',
+      'SESENTA', 'SETENTA', 'OCHENTA', 'NOVENTA'
+    ];
+    const especiales = [
+      'ONCE', 'DOCE', 'TRECE', 'CATORCE', 'QUINCE', 'DIECISÉIS',
+      'DIECISIETE', 'DIECIOCHO', 'DIECINUEVE'
+    ];
+    const centenas = [
+      '', 'CIENTO', 'DOSCIENTOS', 'TRESCIENTOS', 'CUATROCIENTOS',
+      'QUINIENTOS', 'SEISCIENTOS', 'SETECIENTOS', 'OCHOCIENTOS', 'NOVECIENTOS'
+    ];
+
+    if (numero === 0) return 'CERO EUROS';
+
+    // Función para convertir centenas
+    function convertirCentenas(n) {
+      if (n === 0) return '';
+      if (n === 100) return 'CIEN'; // Caso especial para "CIEN"
+      const centena = Math.floor(n / 100);
+      const resto = n % 100;
+      return `${centenas[centena]} ${convertirDecenas(resto)}`.trim();
+    }
+
+    // Función para convertir decenas
+    function convertirDecenas(n) {
+      if (n === 0) return '';
+      if (n >= 11 && n <= 19) return especiales[n - 11];
+      const decena = Math.floor(n / 10);
+      const unidad = n % 10;
+      return `${decenas[decena]}${unidad > 0 ? ` Y ${unidades[unidad]}` : ''}`.trim();
+    }
+
+    // Función para convertir miles
+    function convertirMiles(n) {
+      const miles = Math.floor(n / 1000);
+      const resto = n % 1000;
+      if (miles === 1) return `MIL ${convertirCentenas(resto)}`.trim();
+      return `${convertirCentenas(miles)} MIL ${convertirCentenas(resto)}`.trim();
+    }
+
+    // Función para convertir millones
+    function convertirMillones(n) {
+      const millones = Math.floor(n / 1000000);
+      const resto = n % 1000000;
+      if (millones === 1) return `UN MILLÓN ${convertirMiles(resto)}`.trim();
+      return `${convertirCentenas(millones)} MILLONES ${convertirMiles(resto)}`.trim();
+    }
+
+    // Separar parte entera y decimal
+    const parteEntera = Math.floor(numero);
+    const parteDecimal = Math.round((numero - parteEntera) * 100); // Obtenemos los centavos
+
+    let texto = '';
+    if (parteEntera >= 1000000) {
+      texto = convertirMillones(parteEntera);
+    } else if (parteEntera >= 1000) {
+      texto = convertirMiles(parteEntera);
+    } else {
+      texto = convertirCentenas(parteEntera);
+    }
+
+    const textoCentimos = parteDecimal > 0
+      ? `CON ${convertirCentenas(parteDecimal)} CÉNTIMOS`
+      : '';
+
+    return `${texto} EUROS ${textoCentimos}`.replace(/\s+/g, ' ').toUpperCase();
+  }
+
   try {
     // Generar el PDF modificado con los datos del formulario
     const pdfPath = await generarPDF({
       cliente: name || 'Sin cliente',
-      dineroEnLetra: dineroEnLetra || 'N/A',
-      dineroEnNumero: dineroEnNumero || '0',
+      dineroEnLetra: numeroATexto(cantidad) || 'N/A',
+      dineroEnNumero: cantidad || '0',
       contraDe: contraDe || 'N/A',
       CIFcontra: CIFcontra || 'N/A',
       domicilioContra: domicilioContra || 'N/A',
