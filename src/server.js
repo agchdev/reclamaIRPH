@@ -65,9 +65,9 @@ app.post('/send-email', upload.fields([
       suma: suma || '0',
       contrarioDeudor: contrarioDeudor || 'N/A',
       ascendente: ascendente || 'N/A',
-      diaSem: diaSem || 'N/A',
+      diaSem: new Date().toLocaleDateString('es-ES', { weekday: 'long' }) || 'N/A',
       diaMes: diaMes || 'N/A',
-      mes: mes || 'N/A',
+      mes: new Date().toLocaleDateString('es-ES', { month: 'long' }) || 'N/A',
       anio: anio || 'N/A',
     });
 

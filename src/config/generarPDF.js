@@ -13,9 +13,13 @@ export async function generarPDF(datos) {
         // Leer el contenido del archivo de plantilla
         const htmlTemplate = fs.readFileSync(templatePath, 'utf8');
 
+        const mes = datos.mes || 'N/A';
+        const mesConMayuscula = mes.charAt(0).toUpperCase() + mes.slice(1);
+
         // Reemplazar los marcadores en el HTML con los datos dinámicos
         const htmlContent = htmlTemplate
             .replace('{{cliente}}', datos.cliente || 'Sin cliente')
+            .replace('{{clientee}}', datos.cliente || 'Sin cliente')
             .replace('{{dineroEnLetra}}', datos.dineroEnLetra || 'Cero euros')
             .replace('{{dineroEnNumero}}', datos.dineroEnNumero || '0.00')
             .replace('{{contraDe}}', datos.contraDe || 'Parte contraria')
@@ -32,9 +36,9 @@ export async function generarPDF(datos) {
             .replace('{{suma}}', datos.suma || '0.00')
             .replace('{{contrarioDeudor}}', datos.contrarioDeudor || 'Parte contraria')
             .replace('{{ascendente}}', datos.ascendente || 'N/A')
-            .replace('{{diaSem}}', new Date().getDay() || 'N/A')
+            .replace('{{diaSem}}', datos.diaSem || 'N/A')
             .replace('{{diaMes}}', new Date().getDate() || 'N/A')
-            .replace('{{mes}}', new Date().getMonth() || 'N/A')
+            .replace('{{mes}}', mesConMayuscula || 'N/A')
             .replace('{{anio}}', new Date().getFullYear() || 'N/A')
             .replace('{{email}}', datos.email || 'N/A')
             .replace('{{message}}', datos.message || 'N/A');
@@ -50,7 +54,17 @@ export async function generarPDF(datos) {
 
         // Generar el PDF
         const pdfPath = `./uploads/PETICION_MODIFICADA_${Date.now()}.pdf`;
-        await page.pdf({ path: pdfPath, format: 'A4', printBackground: true });
+        await page.pdf({
+            path: pdfPath,
+            format: 'A4', // Formato estándar A4
+            printBackground: true, // Incluir el fondo y los estilos de la página
+            margin: {
+              top: '25mm', // Margen superior
+              right: '25mm', // Margen derecho
+              bottom: '25mm', // Margen inferior
+              left: '25mm' // Margen izquierdo
+            },
+        });
 
         // Cerrar el navegador
         await browser.close();
